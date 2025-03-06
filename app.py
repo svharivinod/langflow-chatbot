@@ -32,8 +32,8 @@ def get_response(user_input):
         return "⚠️ Error: API response not in expected format."
 
 # Streamlit UI
-st.title("🤖 Langflow Chatbot")
-st.write("Chat with an AI-powered assistant!")
+st.title("🤖 ChatFlow AI")
+st.write("A conversational chatbot designed to keep the conversation flowing effortlessly!")
 
 # Initialize chat history
 if "messages" not in st.session_state:
