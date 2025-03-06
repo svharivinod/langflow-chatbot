@@ -54,7 +54,7 @@ def save_chat_as_pdf():
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    
+
     # Use built-in Helvetica font (works on Streamlit Cloud)
     pdf.set_font("Helvetica", "", 12)
 
@@ -63,10 +63,14 @@ def save_chat_as_pdf():
 
     for msg in st.session_state.messages:
         role = "You" if msg["role"] == "user" else "ChatFlow AI"
-        pdf.multi_cell(0, 10, f"{role}: {msg['content']}", align="L")
+
+        # Convert text to UTF-8 and remove unsupported characters
+        clean_text = msg["content"].encode("utf-8", "ignore").decode("utf-8")
+
+        pdf.multi_cell(0, 10, f"{role}: {clean_text}", align="L")
         pdf.ln(5)
 
-    pdf.output("chat_history.pdf", "F")  # Ensure UTF-8 encoding
+    pdf.output("chat_history.pdf", "F")
 
     with open("chat_history.pdf", "rb") as file:
         st.download_button("📥 Download Chat as PDF", file, file_name="chat_history.pdf")
