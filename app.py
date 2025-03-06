@@ -54,6 +54,9 @@ def save_chat_as_pdf():
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
+    
+    # Set font to support UTF-8 characters
+    pdf.add_font("Arial", "", "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf", uni=True)  # Ensure Arial font is available
     pdf.set_font("Arial", size=12)
 
     pdf.cell(200, 10, "Chat Conversation", ln=True, align="C")
@@ -61,10 +64,11 @@ def save_chat_as_pdf():
 
     for msg in st.session_state.messages:
         role = "You" if msg["role"] == "user" else "ChatFlow AI"
-        pdf.multi_cell(0, 10, f"{role}: {msg['content']}")
+        pdf.multi_cell(0, 10, f"{role}: {msg['content']}", align="L")
         pdf.ln(5)
 
-    pdf.output("chat_history.pdf")
+    pdf.output("chat_history.pdf", "F")  # Ensure UTF-8 encoding
+
     with open("chat_history.pdf", "rb") as file:
         st.download_button("📥 Download Chat as PDF", file, file_name="chat_history.pdf")
 
