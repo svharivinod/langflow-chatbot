@@ -56,15 +56,8 @@ def save_chat_as_pdf():
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    # Ensure the font file exists
-    font_path = "DejaVuSans.ttf"  # Ensure this file is in your Streamlit directory
-    if not os.path.exists(font_path):
-        st.error("Font file not found! Please upload 'DejaVuSans.ttf' to the project directory.")
-        return
-
-    # Load DejaVuSans font (UTF-8 supported)
-    pdf.add_font("DejaVu", "", font_path, uni=True)
-    pdf.set_font("DejaVu", "", 12)
+    # Use built-in Helvetica font (no need for external TTF fonts)
+    pdf.set_font("Helvetica", size=12)
 
     pdf.cell(200, 10, "Chat Conversation", ln=True, align="C")
     pdf.ln(10)
@@ -73,7 +66,7 @@ def save_chat_as_pdf():
         role = "You" if msg["role"] == "user" else "ChatFlow AI"
 
         # Convert text to UTF-8 and remove unsupported characters
-        clean_text = msg["content"].encode("utf-8", "ignore").decode("utf-8")
+        clean_text = msg["content"].encode("latin1", "ignore").decode("latin1")
 
         pdf.multi_cell(0, 10, f"{role}: {clean_text}", align="L")
         pdf.ln(5)
