@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import speech_recognition as sr
+import os
 from fpdf import FPDF
 
 # Load API Token from Streamlit Secrets
@@ -55,8 +56,15 @@ def save_chat_as_pdf():
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    # Use built-in Helvetica font (works on Streamlit Cloud)
-    pdf.set_font("Helvetica", "", 12)
+    # Ensure the font file exists
+    font_path = "DejaVuSans.ttf"  # Ensure this file is in your Streamlit directory
+    if not os.path.exists(font_path):
+        st.error("Font file not found! Please upload 'DejaVuSans.ttf' to the project directory.")
+        return
+
+    # Load DejaVuSans font (UTF-8 supported)
+    pdf.add_font("DejaVu", "", font_path, uni=True)
+    pdf.set_font("DejaVu", "", 12)
 
     pdf.cell(200, 10, "Chat Conversation", ln=True, align="C")
     pdf.ln(10)
