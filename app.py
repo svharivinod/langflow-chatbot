@@ -55,9 +55,8 @@ def save_chat_as_pdf():
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     
-    # Set font to support UTF-8 characters
-    pdf.add_font("Arial", "", "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf", uni=True)  # Ensure Arial font is available
-    pdf.set_font("Arial", size=12)
+    # Use built-in Helvetica font (works on Streamlit Cloud)
+    pdf.set_font("Helvetica", "", 12)
 
     pdf.cell(200, 10, "Chat Conversation", ln=True, align="C")
     pdf.ln(10)
