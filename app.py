@@ -33,9 +33,12 @@ st.set_page_config(page_title="ChatFlow AI", layout="wide")
 st.title("🤖 ChatFlow AI")
 st.write("A conversational chatbot designed to keep the conversation flowing effortlessly!")
 
-# Initialize chat history
+# **Initialize session state variables**
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "user_input" not in st.session_state:
+    st.session_state.user_input = ""  # Ensure input field exists in session state
 
 # Display previous chat messages
 chat_container = st.container()
@@ -47,20 +50,24 @@ with chat_container:
 # Ensure the text input box remains at the bottom
 st.markdown("---")
 query_container = st.container()
+
 with query_container:
-    user_input = st.text_input("You:", key="user_input", help="Type your query below.", label_visibility="hidden")
+    user_input = st.text_input("You:", value=st.session_state.user_input, key="user_input", help="Type your query below.", label_visibility="hidden")
     send_button = st.button("Send", use_container_width=True)
 
 # If the user enters a query or clicks "Send", process it
 if send_button and user_input.strip():
+    # Append user message
     st.session_state.messages.append({"role": "user", "content": user_input})
 
+    # Get chatbot response
     response = get_response(user_input)
 
+    # Append bot response
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # **Fixed the issue: Properly reset the input field**
-    st.session_state.user_input = ""  # Clears input field
+    # **Fixed: Properly reset the input field**
+    st.session_state.user_input = ""  # Clears input field **AFTER** processing
 
-    # Rerun the app to reflect the new chat
-    st.rerun()
+    # Rerun the app to refresh UI
+    st.experimental_rerun()
