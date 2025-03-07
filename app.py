@@ -11,7 +11,7 @@ LANGFLOW_API_URL = "https://api.langflow.astra.datastax.com/lf/fd0b889e-09f8-4a5
 def get_response(user_input):
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer " + APPLICATION_TOKEN
+        "Authorization": f"Bearer {APPLICATION_TOKEN}"
     }
     payload = {
         "input_value": user_input,
@@ -59,8 +59,8 @@ if send_button and user_input.strip():
 
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # Clear the input field after sending the message
-    st.query_params()["user_input"] = ""
+    # **Fixed the issue: Properly update query params**
+    st.query_params(user_input="")
 
     # Rerun the app to reflect the new chat
     st.rerun()
