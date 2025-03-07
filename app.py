@@ -48,7 +48,7 @@ with chat_container:
 st.markdown("---")
 query_container = st.container()
 with query_container:
-    user_input = st.text_input("You:", "", key="user_input", help="Type your query below.", label_visibility="hidden")
+    user_input = st.text_input("You:", key="user_input", help="Type your query below.", label_visibility="hidden")
     send_button = st.button("Send", use_container_width=True)
 
 # If the user enters a query or clicks "Send", process it
@@ -59,8 +59,8 @@ if send_button and user_input.strip():
 
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # **Fixed the issue: Properly update query params**
-    st.query_params(user_input="")
+    # **Fixed the issue: Properly reset the input field**
+    st.session_state.user_input = ""  # Clears input field
 
     # Rerun the app to reflect the new chat
     st.rerun()
