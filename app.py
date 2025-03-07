@@ -11,7 +11,7 @@ LANGFLOW_API_URL = "https://api.langflow.astra.datastax.com/lf/fd0b889e-09f8-4a5
 def get_response(user_input):
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {APPLICATION_TOKEN}"
+        "Authorization": f"Bearer " + APPLICATION_TOKEN
     }
     payload = {
         "input_value": user_input,
@@ -27,8 +27,9 @@ def get_response(user_input):
     except (KeyError, IndexError, TypeError, requests.exceptions.JSONDecodeError):
         return "⚠️ Error: Unable to process the response. Please try again."
 
-# Streamlit UI
-st.set_page_config(page_title="ChatFlow AI", layout="wide")  # Ensures fullscreen UI
+# Set up Streamlit page
+st.set_page_config(page_title="ChatFlow AI", layout="wide")
+
 st.title("🤖 ChatFlow AI")
 st.write("A conversational chatbot designed to keep the conversation flowing effortlessly!")
 
@@ -36,7 +37,7 @@ st.write("A conversational chatbot designed to keep the conversation flowing eff
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display previous chat messages (Chat UI)
+# Display previous chat messages
 chat_container = st.container()
 with chat_container:
     for message in st.session_state.messages:
@@ -47,10 +48,11 @@ with chat_container:
 st.markdown("---")
 query_container = st.container()
 with query_container:
-    user_input = st.text_input("You:", "", key="user_input", help="Type your query and press Enter.", label_visibility="hidden")
+    user_input = st.text_input("You:", "", key="user_input", help="Type your query below.", label_visibility="hidden")
+    send_button = st.button("Send", use_container_width=True)
 
-# If the user enters a query, process it
-if user_input:
+# If the user enters a query or clicks "Send", process it
+if send_button and user_input.strip():
     st.session_state.messages.append({"role": "user", "content": user_input})
 
     response = get_response(user_input)
@@ -58,7 +60,7 @@ if user_input:
     st.session_state.messages.append({"role": "assistant", "content": response})
 
     # Clear the input field after sending the message
-    st.experimental_set_query_params(user_input="")
+    st.query_params()["user_input"] = ""
 
-    # Rerun the app to reflect changes in the chat
-    st.experimental_rerun()
+    # Rerun the app to reflect the new chat
+    st.rerun()
