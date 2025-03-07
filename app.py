@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Load API Token from Streamlit Secrets
-APPLICATION_TOKEN = st.secrets["APPLICATION_TOKEN"]
+APPLICATION_TOKEN = st.secrets["APPLICATION_TOKEN"]  
 
 # Langflow API URL
 LANGFLOW_API_URL = "https://api.langflow.astra.datastax.com/lf/fd0b889e-09f8-4a5d-ba96-7f9476c8a80f/api/v1/run/1e2a1826-1112-4ff3-b261-a8bbb45e5a1c"
@@ -27,47 +27,28 @@ def get_response(user_input):
     except (KeyError, IndexError, TypeError, requests.exceptions.JSONDecodeError):
         return "⚠️ Error: Unable to process the response. Please try again."
 
-# Set up Streamlit page
-st.set_page_config(page_title="ChatFlow AI", layout="wide")
-
+# Streamlit UI
 st.title("🤖 ChatFlow AI")
 st.write("A conversational chatbot designed to keep the conversation flowing effortlessly!")
 
-# **Initialize session state variables**
+# Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-if "user_input" not in st.session_state:
-    st.session_state.user_input = ""  # Ensure input field exists in session state
-
 # Display previous chat messages
-chat_container = st.container()
-with chat_container:
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# Ensure the text input box remains at the bottom
-st.markdown("---")
-query_container = st.container()
+# User Input
+user_input = st.text_input("You:", "")
 
-with query_container:
-    user_input = st.text_input("You:", value=st.session_state.user_input, key="user_input", help="Type your query below.", label_visibility="hidden")
-    send_button = st.button("Send", use_container_width=True)
-
-# If the user enters a query or clicks "Send", process it
-if send_button and user_input.strip():
-    # Append user message
+if st.button("Send") and user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    # Get chatbot response
     response = get_response(user_input)
 
-    # Append bot response
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # **Fixed: Properly reset the input field**
-    st.session_state.user_input = ""  # Clears input field **AFTER** processing
-
-    # Rerun the app to refresh UI
-    st.experimental_rerun()
+    with st.chat_message("assistant"):
+        st.markdown(response)
