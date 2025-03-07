@@ -2,4 +2,3 @@ streamlit
 requests
 speechrecognition
 pydub
-fpdf
